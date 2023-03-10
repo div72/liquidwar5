@@ -74,7 +74,7 @@ disp_stretch_area (void)
 {
   stretch_blit (CURRENT_AREA_DISP, NEXT_SCREEN, 0, 0,
                 CURRENT_AREA_W, CURRENT_AREA_H,
-                0, 0, NEXT_SCREEN->w, NEXT_SCREEN->h);
+                0, 0, al_get_bitmap_width(NEXT_SCREEN), al_get_bitmap_height(NEXT_SCREEN));
 }
 
 /*------------------------------------------------------------------*/
@@ -98,8 +98,8 @@ display_gradient (int i)
   bmp = create_gradient_bitmap (i);
   if (bmp)
     {
-      stretch_blit (bmp, NEXT_SCREEN, 0, 0, bmp->w, bmp->h,
-                    0, 0, NEXT_SCREEN->w, NEXT_SCREEN->h);
+      stretch_blit (bmp, NEXT_SCREEN, 0, 0, al_get_bitmap_width(bmp), al_get_bitmap_height(bmp),
+                    0, 0, al_get_bitmap_width(NEXT_SCREEN), al_get_bitmap_height(NEXT_SCREEN));
       destroy_bitmap (bmp);
     }
 }
@@ -113,8 +113,8 @@ display_mesh (int i)
   bmp = create_mesh_bitmap (i);
   if (bmp)
     {
-      stretch_blit (bmp, NEXT_SCREEN, 0, 0, bmp->w, bmp->h,
-                    0, 0, NEXT_SCREEN->w, NEXT_SCREEN->h);
+      stretch_blit (bmp, NEXT_SCREEN, 0, 0, al_get_bitmap_width(bmp), al_get_bitmap_height(bmp),
+                    0, 0, al_get_bitmap_width(NEXT_SCREEN), al_get_bitmap_height(NEXT_SCREEN));
       destroy_bitmap (bmp);
     }
 }
