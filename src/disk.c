@@ -331,13 +331,17 @@ read_map_dat ()
 }
 
 /*------------------------------------------------------------------*/
-static void
+static bool
 read_back_dat ()
 {
   int i, x, y;
 
   // BACK_PALETTE = read_bitmap("back", "palette.pcx");
   BACK_IMAGE = read_bitmap("back", "lw5back.pcx");
+
+  if (BACK_IMAGE == NULL) {
+      return false;
+  }
 
   /*
    * strange, with Allegro 4.0, the liquidwarcol utility
@@ -354,6 +358,8 @@ read_back_dat ()
       {
         putpixel (BACK_IMAGE, x, y, getpixel (BACK_IMAGE, x, y) + 18);
       }
+
+  return true;
 }
 
 /*------------------------------------------------------------------*/
@@ -371,7 +377,7 @@ read_font_dat ()
 }
 
 /*------------------------------------------------------------------*/
-static void
+static bool
 read_music_dat ()
 {
   /* int i; */
@@ -382,11 +388,14 @@ read_music_dat ()
   /*     MIDI_MUSIC[i] = df[i].dat; */
   /*     MIDI_MUSIC_NUMBER++; */
   /*   } */
+  return true;
 }
 
 
 /*------------------------------------------------------------------*/
 static int check_loadable() {
+  int loadable;
+
 #ifdef DOS
   loadable = 1;
 #else
@@ -561,7 +570,7 @@ load_custom_texture (void)
   fix_filename_slashes (buf);
 
   CUSTOM_TEXTURE_OK = 0;
-  for_each_file_ex (buf, 0, FA_DIREC, load_custom_texture_callback, NULL);
+  // for_each_file_ex (buf, 0, FA_DIREC, load_custom_texture_callback, NULL);
   result = CUSTOM_TEXTURE_OK;
 
   return result;
@@ -603,7 +612,7 @@ load_custom_map (void)
   fix_filename_slashes (buf);
 
   CUSTOM_MAP_OK = 0;
-  for_each_file_ex (buf, 0, FA_DIREC, load_custom_map_callback, NULL);
+  // for_each_file_ex (buf, 0, FA_DIREC, load_custom_map_callback, NULL);
   result = CUSTOM_MAP_OK;
 
   return result;
@@ -646,7 +655,7 @@ load_custom_music (void)
   fix_filename_slashes (buf);
 
   CUSTOM_MUSIC_OK = 0;
-  for_each_file_ex (buf, 0, FA_DIREC, load_custom_music_callback, NULL);
+  // for_each_file_ex (buf, 0, FA_DIREC, load_custom_music_callback, NULL);
   result = CUSTOM_MUSIC_OK;
 
   return result;
