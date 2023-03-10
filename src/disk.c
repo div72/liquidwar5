@@ -360,14 +360,14 @@ read_back_dat ()
 static bool
 read_font_dat ()
 {
-  FONT_PALETTE = read_bitmap("font", "palette.pcx");
+  // FONT_PALETTE = read_bitmap("font", "palette.pcx");
   SMALL_FONT = read_bitmap("font", "degrad10.pcx");
   BIG_FONT = read_bitmap("font", "degrad20.pcx");
   SMALL_MOUSE_CURSOR = read_bitmap("font", "mouse20.pcx");
   BIG_MOUSE_CURSOR = read_bitmap("font", "mouse40.pcx");
   INVISIBLE_MOUSE_CURSOR = read_bitmap("font", "void1.pcx");
 
-  return FONT_PALETTE != NULL && SMALL_FONT != NULL & BIG_FONT != NULL & SMALL_MOUSE_CURSOR != NULL & BIG_MOUSE_CURSOR != NULL & INVISIBLE_MOUSE_CURSOR != NULL;
+  return /*FONT_PALETTE != NULL && */SMALL_FONT != NULL & BIG_FONT != NULL & SMALL_MOUSE_CURSOR != NULL & BIG_MOUSE_CURSOR != NULL & INVISIBLE_MOUSE_CURSOR != NULL;
 }
 
 /*------------------------------------------------------------------*/
