@@ -307,7 +307,7 @@ read_map_dat ()
           continue;
       }
       char* file_path = lw_path_join3(STARTUP_DAT_PATH, "map", ent->d_name);
-      if (path == NULL) {
+      if (file_path == NULL) {
           return false;
       }
       FILE* file = fopen(file_path, "rb");
