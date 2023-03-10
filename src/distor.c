@@ -100,16 +100,16 @@ init_distorsion_target (void)
 {
   if (DISTORSION_TARGET == NULL)
     {
-      DISTORSION_TARGET = my_create_bitmap (NEXT_SCREEN->w, NEXT_SCREEN->h);
+      DISTORSION_TARGET = my_create_bitmap (al_get_bitmap_width(NEXT_SCREEN), al_get_bitmap_height(NEXT_SCREEN));
     }
   else
     {
-      if (DISTORSION_TARGET->w != NEXT_SCREEN->w ||
-          DISTORSION_TARGET->h != NEXT_SCREEN->h)
+      if (al_get_bitmap_width(DISTORSION_TARGET) != al_get_bitmap_width(NEXT_SCREEN) ||
+          al_get_bitmap_height(DISTORSION_TARGET) != al_get_bitmap_height(NEXT_SCREEN))
         {
           destroy_bitmap (DISTORSION_TARGET);
-          DISTORSION_TARGET = my_create_bitmap (NEXT_SCREEN->w,
-                                                NEXT_SCREEN->h);
+          DISTORSION_TARGET = my_create_bitmap (al_get_bitmap_width(NEXT_SCREEN),
+                                                al_get_bitmap_height(NEXT_SCREEN));
         }
     }
 }
@@ -122,8 +122,8 @@ init_distorsion_displayer (void)
 
   init_distorsion_target ();
 
-  w = DISTORSION_TARGET->w;
-  h = DISTORSION_TARGET->h;
+  w = al_get_bitmap_width(DISTORSION_TARGET);
+  h = al_get_bitmap_height(DISTORSION_TARGET);
 
   DISTORSION_W = (CONFIG_WAVE_AMPLI[0] + CONFIG_WAVE_AMPLI[3])
     / WAVE_SIZE_SCALE + 1;
@@ -245,8 +245,8 @@ prepare_wave_shapes (void)
 {
   int w, h, x, y, i;
 
-  w = DISTORSION_TARGET->w;
-  h = DISTORSION_TARGET->h;
+  w = al_get_bitmap_width(DISTORSION_TARGET);
+  h = al_get_bitmap_height(DISTORSION_TARGET);
 
   create_wave_line (WAVE_SHAPE_WX, w,
                     CONFIG_WAVE_NUMBER[0],
@@ -307,8 +307,8 @@ disp_distorted_area (void)
   bmp_memory = is_memory_bitmap (DISTORSION_TARGET);
 #endif
 
-  w = DISTORSION_TARGET->w;
-  h = DISTORSION_TARGET->h;
+  w = al_get_bitmap_width(DISTORSION_TARGET);
+  h = al_get_bitmap_height(DISTORSION_TARGET);
   lim_w = DISTORSION_PRECISION * w;
   lim_h = DISTORSION_PRECISION * h;
   init_w = (CURRENT_AREA_W * DISTORSION_PRECISION) / 2;
@@ -392,5 +392,5 @@ disp_distorted_area (void)
     }
 
   blit (DISTORSION_TARGET, NEXT_SCREEN, 0, 0, 0, 0,
-        DISTORSION_TARGET->w, DISTORSION_TARGET->h);
+        al_get_bitmap_width(DISTORSION_TARGET), al_get_bitmap_height(DISTORSION_TARGET));
 }
