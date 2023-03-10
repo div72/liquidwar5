@@ -336,8 +336,8 @@ read_back_dat ()
 {
   int i, x, y;
 
-  BACK_PALETTE = df[1].dat;
-  BACK_IMAGE = df[0].dat;
+  BACK_PALETTE = read_bitmap("back", "palette.pcx");
+  BACK_IMAGE = read_bitmap("back", "lw5back.pcx");
 
   /*
    * strange, with Allegro 4.0, the liquidwarcol utility
@@ -346,8 +346,8 @@ read_back_dat ()
    * start at color 0, which explains the "18 shift"
    */
 
-  for (i = 0; i <= 45; ++i)
-    GLOBAL_PALETTE[i + 18] = BACK_PALETTE[i];
+  /*for (i = 0; i <= 45; ++i)
+    GLOBAL_PALETTE[i + 18] = BACK_PALETTE[i];*/
 
   for (x = 0; x < BACK_IMAGE->w; ++x)
     for (y = 0; y < BACK_IMAGE->w; ++y)
