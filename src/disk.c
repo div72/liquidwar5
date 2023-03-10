@@ -52,6 +52,7 @@
 /* includes                                                         */
 /*==================================================================*/
 
+#include <dirent.h>
 #include <string.h>
 #include <allegro5/allegro.h>
 
@@ -136,10 +137,10 @@ lock_sound (ALLEGRO_SAMPLE * smp)
 }
 
 /*------------------------------------------------------------------*/
-static ALLEGRO_SAMPLE *read_sfx(const char *filename) {
+static ALLEGRO_SAMPLE *read_sample(const char* subdir, const char *filename) {
   ALLEGRO_SAMPLE *ret = NULL;
 
-  char * path = lw_path_join3(STARTUP_DAT_PATH, "sfx", filename);
+  char * path = lw_path_join3(STARTUP_DAT_PATH, subdir, filename);
   if (path == NULL) {
     return NULL;
   }
@@ -152,12 +153,12 @@ static ALLEGRO_SAMPLE *read_sfx(const char *filename) {
 static bool
 read_sfx_dat ()
 {
-  SAMPLE_SFX_TIME = read_sfx("clock1.wav");
-  SAMPLE_SFX_WIN = read_sfx("crowd1.wav");
-  SAMPLE_SFX_CONNECT = read_sfx("cuckoo.wav");
-  SAMPLE_SFX_GO = read_sfx("foghorn.wav");
-  SAMPLE_SFX_CLICK = read_sfx("spash1.wav");
-  SAMPLE_SFX_LOOSE = read_sfx("war.wav");
+  SAMPLE_SFX_TIME = read_sample("sfx", "clock1.wav");
+  SAMPLE_SFX_WIN = read_sample("sfx", "crowd1.wav");
+  SAMPLE_SFX_CONNECT = read_sample("sfx", "cuckoo.wav");
+  SAMPLE_SFX_GO = read_sample("sfx", "foghorn.wav");
+  SAMPLE_SFX_CLICK = read_sample("sfx", "spash1.wav");
+  SAMPLE_SFX_LOOSE = read_sample("sfx", "war.wav");
 
   return SAMPLE_SFX_TIME != NULL &&
     SAMPLE_SFX_WIN != NULL &&
@@ -168,17 +169,36 @@ read_sfx_dat ()
 }
 
 /*------------------------------------------------------------------*/
-static void
+static bool
 read_water_dat ()
 {
   int i;
 
-  for (i = 0; i < SAMPLE_WATER_DAT_NUMBER && df[i].type != DAT_END; ++i)
+  char* dir_path = lw_path_join2(STARTUP_DAT_PATH, "water");
+  if (dir_path == NULL) {
+      return false;
+  }
+  DIR* dir = opendir(dir_path);
+  free(dir_path);
+  if (dir == NULL) {
+      return false;
+  }
+
+  struct dirent* ent;
+  bool ret = true;
+  for (i = 0; i < SAMPLE_WATER_DAT_NUMBER && (ent = readdir(dir)) != NULL; ++i)
     {
-      SAMPLE_WATER[i] = df[i].dat;
+      if (ent->d_type != DT_REG || strcmp(ent->d_name, "Makefile.in") == 0) {
+          --i;
+          continue;
+      }
+      SAMPLE_WATER[i] = read_sample("water", ent->d_name);
       lock_sound (SAMPLE_WATER[i]);
       SAMPLE_WATER_NUMBER++;
+      ret &= SAMPLE_WATER[i] != NULL;
     }
+
+  return ret;
 }
 
 /*------------------------------------------------------------------*/
