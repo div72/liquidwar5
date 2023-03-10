@@ -104,7 +104,7 @@ exit_all (void)
        */
       rest (10);
       last_flip ();
-      set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
+      //set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
       rest (10);
 
       log_println ();
@@ -276,7 +276,10 @@ my_exit_poll ()
    * We exit if the close button has been clicked or
    * F10 has been pressed
    */
-  if (LW_EXIT_FORCE_SHUTDOWN || key[ALLEGRO_KEY_F10])
+  ALLEGRO_KEYBOARD_STATE kbdstate;
+  al_get_keyboard_state(&kbdstate);
+
+  if (LW_EXIT_FORCE_SHUTDOWN || al_key_down(&kbdstate, ALLEGRO_KEY_F10))
     {
       my_exit (EXIT_CODE_OK);
     }
