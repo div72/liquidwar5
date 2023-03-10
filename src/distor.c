@@ -289,7 +289,6 @@ prepare_wave_shapes (void)
 void
 disp_distorted_area (void)
 {
-  char *src;
   int x, y, w, h, lim_w, lim_h, init_w, init_h;
   int *y_corres;
   int fp_x, fp_y, fp_y0, ip_y0;
@@ -324,7 +323,8 @@ disp_distorted_area (void)
     {
       fp_y = fp_y0;
       fp_x = init_w;
-      src = (char *) CURRENT_AREA_DISP->dat + ip_y0 * CURRENT_AREA_W;
+      int src_x = 0;
+      int src_y = ip_y0;
       y_corres = WAVE_SHAPE_Y_CORRES[y];
 
 #ifdef ASM
@@ -349,37 +349,37 @@ disp_distorted_area (void)
                             y_corres,
                             WAVE_SHAPE_WX,
                             WAVE_SHAPE_X_CORRES,
-                            src, temp, temp, temp, temp, temp);
+                            getpixel(src_x, src_y, CURRENT_AREA_DISP), temp, temp, temp, temp, temp);
         }
       else
 #endif
         for (x = 0; x < w; ++x)
           {
-            putpixel (DISTORSION_TARGET, x, y, *src);
+            putpixel (DISTORSION_TARGET, x, y, getpixel(src_x, src_y, CURRENT_AREA_DISP));
 
             reste_x = fp_x0[x] += WAVE_SHAPE_X_CORRES[x][y];
             fp_x += WAVE_SHAPE_WX[x];
             while (reste_x < -fp_x)
               {
                 fp_x += lim_w;
-                src--;
+                src_x--;
               }
             while (reste_x + fp_x >= lim_w)
               {
                 fp_x -= lim_w;
-                src++;
+                src_x++;
               }
 
             fp_y += y_corres[x];
             while (fp_y < 0)
               {
                 fp_y += lim_h;
-                src -= CURRENT_AREA_W;
+                src_y--;
               }
             while (fp_y >= lim_h)
               {
                 fp_y -= lim_h;
-                src += CURRENT_AREA_W;
+                src_y++;
               }
           }
 
