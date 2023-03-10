@@ -336,7 +336,7 @@ read_back_dat ()
 {
   int i, x, y;
 
-  BACK_PALETTE = read_bitmap("back", "palette.pcx");
+  // BACK_PALETTE = read_bitmap("back", "palette.pcx");
   BACK_IMAGE = read_bitmap("back", "lw5back.pcx");
 
   /*
@@ -349,8 +349,8 @@ read_back_dat ()
   /*for (i = 0; i <= 45; ++i)
     GLOBAL_PALETTE[i + 18] = BACK_PALETTE[i];*/
 
-  for (x = 0; x < BACK_IMAGE->w; ++x)
-    for (y = 0; y < BACK_IMAGE->w; ++y)
+  for (x = 0; x < al_get_bitmap_width(BACK_IMAGE); ++x)
+    for (y = 0; y < al_get_bitmap_height(BACK_IMAGE); ++y)
       {
         putpixel (BACK_IMAGE, x, y, getpixel (BACK_IMAGE, x, y) + 18);
       }
