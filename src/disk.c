@@ -357,17 +357,17 @@ read_back_dat ()
 }
 
 /*------------------------------------------------------------------*/
-static void
+static bool
 read_font_dat ()
 {
-  int i;
+  FONT_PALETTE = read_bitmap("font", "palette.pcx");
+  SMALL_FONT = read_bitmap("font", "degrad10.pcx");
+  BIG_FONT = read_bitmap("font", "degrad20.pcx");
+  SMALL_MOUSE_CURSOR = read_bitmap("font", "mouse20.pcx");
+  BIG_MOUSE_CURSOR = read_bitmap("font", "mouse40.pcx");
+  INVISIBLE_MOUSE_CURSOR = read_bitmap("font", "void1.pcx");
 
-  FONT_PALETTE = df[4].dat;
-  SMALL_FONT = df[0].dat;
-  BIG_FONT = df[1].dat;
-  SMALL_MOUSE_CURSOR = df[2].dat;
-  BIG_MOUSE_CURSOR = df[3].dat;
-  INVISIBLE_MOUSE_CURSOR = df[5].dat;
+  return FONT_PALETTE != NULL && SMALL_FONT != NULL & BIG_FONT != NULL & SMALL_MOUSE_CURSOR != NULL & BIG_MOUSE_CURSOR != NULL & INVISIBLE_MOUSE_CURSOR != NULL;
 }
 
 /*------------------------------------------------------------------*/
