@@ -99,10 +99,10 @@ ALLEGRO_SAMPLE *SAMPLE_SFX_LOOSE = NULL;
 ALLEGRO_SAMPLE *SAMPLE_SFX_CONNECT = NULL;
 
 ALLEGRO_SAMPLE *SAMPLE_WATER[SAMPLE_WATER_MAX_NUMBER];
-void *RAW_MAP[RAW_MAP_MAX_NUMBER];
-void *RAW_MAP_ORDERED[RAW_MAP_MAX_NUMBER];
-void *RAW_TEXTURE[RAW_TEXTURE_MAX_NUMBER];
-void *RAW_MAPTEX[RAW_TEXTURE_MAX_NUMBER];
+char *RAW_MAP[RAW_MAP_MAX_NUMBER];
+char *RAW_MAP_ORDERED[RAW_MAP_MAX_NUMBER];
+ALLEGRO_BITMAP *RAW_TEXTURE[RAW_TEXTURE_MAX_NUMBER];
+ALLEGRO_BITMAP *RAW_MAPTEX[RAW_TEXTURE_MAX_NUMBER];
 //MIDI *MIDI_MUSIC[MIDI_MUSIC_MAX_NUMBER];
 
 ALLEGRO_BITMAP *BACK_IMAGE = NULL;
@@ -206,45 +206,128 @@ read_water_dat ()
 /*------------------------------------------------------------------*/
 
 /*------------------------------------------------------------------*/
-static void
+static ALLEGRO_BITMAP *read_bitmap(const char* subdir, const char *filename) {
+  ALLEGRO_BITMAP *ret = NULL;
+
+  char * path = lw_path_join3(STARTUP_DAT_PATH, subdir, filename);
+  if (path == NULL) {
+    return NULL;
+  }
+  ret = al_load_bitmap(path);
+  free(path);
+  return ret;
+}
+
+/*------------------------------------------------------------------*/
+static bool
 read_texture_dat ()
 {
   int i;
 
-  RAW_TEXTURE_NUMBER = 0;
-  for (i = 0; i < RAW_TEXTURE_DAT_NUMBER && df[i].type != DAT_END; ++i)
+  char* dir_path = lw_path_join2(STARTUP_DAT_PATH, "texture");
+  if (dir_path == NULL) {
+      return false;
+  }
+  DIR* dir = opendir(dir_path);
+  free(dir_path);
+  if (dir == NULL) {
+      return false;
+  }
+
+  struct dirent* ent;
+  bool ret = true;
+  for (i = 0; i < RAW_TEXTURE_DAT_NUMBER && (ent = readdir(dir)) != NULL; ++i)
     {
-      RAW_TEXTURE[i] = df[i].dat;
+      if (ent->d_type != DT_REG || strcmp(ent->d_name, "Makefile.in") == 0) {
+          --i;
+          continue;
+      }
+      RAW_TEXTURE[i] = read_bitmap("texture", ent->d_name);
       RAW_TEXTURE_NUMBER++;
+      ret &= RAW_TEXTURE[i] != NULL;
     }
+
+  return ret;
 }
 
 /*------------------------------------------------------------------*/
-static void
+static bool
 read_maptex_dat ()
 {
   int i;
 
-  RAW_MAPTEX_NUMBER = 0;
-  for (i = 0; i < RAW_TEXTURE_DAT_NUMBER && df[i].type != DAT_END; ++i)
+  char* dir_path = lw_path_join2(STARTUP_DAT_PATH, "map");
+  if (dir_path == NULL) {
+      return false;
+  }
+  DIR* dir = opendir(dir_path);
+  free(dir_path);
+  if (dir == NULL) {
+      return false;
+  }
+
+  struct dirent* ent;
+  bool ret = true;
+  for (i = 0; i < RAW_MAP_DAT_NUMBER && (ent = readdir(dir)) != NULL; ++i)
     {
-      RAW_MAPTEX[i] = df[i].dat;
+      if (ent->d_type != DT_REG || strcmp(ent->d_name + strlen(ent->d_name) - 4, "pcx") != 0) {
+          --i;
+          continue;
+      }
+      RAW_MAPTEX[i] = read_bitmap("map", ent->d_name);
       RAW_MAPTEX_NUMBER++;
+      ret &= RAW_MAPTEX[i] != NULL;
     }
+
+  return ret;
 }
 
 /*------------------------------------------------------------------*/
-static void
+static bool
 read_map_dat ()
 {
   int i;
 
-  RAW_MAP_NUMBER = 0;
-  for (i = 0; i < RAW_MAP_DAT_NUMBER && df[i].type != DAT_END; ++i)
+  char* dir_path = lw_path_join2(STARTUP_DAT_PATH, "map");
+  if (dir_path == NULL) {
+      return false;
+  }
+  DIR* dir = opendir(dir_path);
+  free(dir_path);
+  if (dir == NULL) {
+      return false;
+  }
+
+  struct dirent* ent;
+  bool ret = true;
+  for (i = 0; i < RAW_MAP_DAT_NUMBER && (ent = readdir(dir)) != NULL; ++i)
     {
-      RAW_MAP[i] = df[i].dat;
+      if (ent->d_type != DT_REG || strcmp(ent->d_name + strlen(ent->d_name) - 4, "txt") != 0) {
+          --i;
+          continue;
+      }
+      char* file_path = lw_path_join3(STARTUP_DAT_PATH, "map", ent->d_name);
+      if (path == NULL) {
+          return false;
+      }
+      FILE* file = fopen(file_path, "rb");
+      free(file_path);
+      if (file == NULL) {
+          return false;
+      }
+      char buf[1024];
+      size_t len = fread(buf, 1, sizeof(buf), file);
+      RAW_MAP[i] = malloc(len + 1);
+      ret &= RAW_MAP[i] != NULL;
       RAW_MAP_NUMBER++;
+      if (RAW_MAP[i] == NULL) {
+          continue;
+      }
+      memcpy(RAW_MAP[i], buf, len);
+      RAW_MAP[i][len] = 0;
     }
+
+  return ret;
 }
 
 /*------------------------------------------------------------------*/
